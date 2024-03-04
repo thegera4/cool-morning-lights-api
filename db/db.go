@@ -38,7 +38,6 @@ func InitDB() *mongo.Client {
 
 // Returns a collection from the Mongo database or create and return a collection if it doesn't exist.
 func GetDBCollection(collectionName string) *mongo.Collection {
-	// Check if the client is initialized
 	if client == nil {
 		panic("MongoDB client is not initialized. Call InitDB first.")
 	}
@@ -46,7 +45,6 @@ func GetDBCollection(collectionName string) *mongo.Collection {
 	database := client.Database(dbName)
 	collection := database.Collection(collectionName)
 
-	// List all collections in the database
 	names, err := database.ListCollectionNames(context.Background(), bson.M{"name": collectionName})
 	if err != nil {
 		panic(err)
@@ -60,4 +58,14 @@ func GetDBCollection(collectionName string) *mongo.Collection {
 	}
 
 	return collection
+}
+
+// Return a user from the database if it exists.
+func GetUserByEmail(collection *mongo.Collection, email string) (bson.M, error) {
+	var user bson.M
+	err := collection.FindOne(context.TODO(), bson.M{"email": email}).Decode(&user)
+	if err != nil {
+		return nil, err
+	}
+	return user, nil
 }

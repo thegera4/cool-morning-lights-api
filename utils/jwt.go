@@ -9,20 +9,19 @@ import (
 	_ "github.com/joho/godotenv/autoload"
 )
 
-// Generates a new JWT token
-func GenerateToken(email string, userId int64) (string, error) {
+// Generates a new JWT token.
+func GenerateToken(email string) (string, error) {
 	secretKey := os.Getenv("JWT_SECRET_KEY")
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"email": email,
-		"userId": userId,
 		"exp": time.Now().Add(time.Hour * 1).Unix(),
 	})
 
 	return token.SignedString([]byte(secretKey))
 }
 
-// Validates a JWT token and returns the user's id
+// Validates a JWT token and returns the user's id.
 func ValidateToken(token string) (int64, error) {
 	secretKey := os.Getenv("JWT_SECRET_KEY")
 	

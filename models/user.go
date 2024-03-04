@@ -9,6 +9,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
+// User struct to represent a user in the application
 type User struct {
 	//Id       int64 no need to include this field, MongoDB will automatically generate an ID for each user
 	Email    string `bson:"email" binding:"required"`
@@ -18,17 +19,17 @@ type User struct {
 
 // Saves a user to the Mongo database if it doesn't exist.
 func (u User) Save() error {
-	collection := db.GetDBCollection("users") // Get or Create a Mongo collection for users
-	ctx := context.TODO() // Create a context
+	collection := db.GetDBCollection("users")
+	ctx := context.TODO()
 
-	userExists, err := utils.UserExistsInDb(ctx, collection, u.Email) // Check if the user already exists in MongoDB
+	userExists, err := utils.UserExistsInDb(ctx, collection, u.Email)
 	if err != nil { return err }
-	if userExists { return errors.New("User already exists") } // If the user exists, return a new error
+	if userExists { return errors.New("User already exists") }
 
-	hashedPassword, err := utils.HashPassword(u.Password) // Hash the user's password
+	hashedPassword, err := utils.HashPassword(u.Password)
 	if err != nil { return err }
 
-	_, err = collection.InsertOne(ctx, bson.M{ // Insert the user into the collection
+	_, err = collection.InsertOne(ctx, bson.M{
 		"email":    u.Email,
 		"password": hashedPassword,
 		"username": u.Username,
@@ -47,12 +48,13 @@ type UserWithoutPassword struct {
 // Returns all users from the Mongo database without including their passwords.
 func GetAllUsers() ([]UserWithoutPassword, error) {
 	var users []UserWithoutPassword
-	collection := db.GetDBCollection("users") // Get or Create a Mongo collection for users
-	ctx := context.TODO() // Create a context
+	collection := db.GetDBCollection("users")
+	ctx := context.TODO()
 
 	projection := bson.M{"email": 1, "username": 1} // Exclude the password from the query
-	cursor, err := collection.Find(ctx, bson.M{}, options.Find().SetProjection(projection)) // Get all users from the collection
+	cursor, err := collection.Find(ctx, bson.M{}, options.Find().SetProjection(projection))
 	if err != nil { return nil, err }
+
 	defer cursor.Close(ctx)
 
 	for cursor.Next(ctx) {
@@ -63,4 +65,22 @@ func GetAllUsers() ([]UserWithoutPassword, error) {
 	}
 
 	return users, nil
+}
+
+// Validates the user's credentials by checking if the user exists and if the password is correct.
+func (u User) ValidateCredentials() error {
+	collection := db.GetDBCollection("users")
+	ctx := context.TODO()
+
+	userExists, err := utils.UserExistsInDb(ctx, collection, u.Email)
+	if err != nil { return err }
+	if !userExists { return errors.New("User does not exist") }
+
+	userData, err := db.GetUserByEmail(collection, u.Email)
+	if err != nil { return err }
+
+	passwordIsValid := utils.CheckPasswordHash(u.Password, userData["password"].(string))
+	if !passwordIsValid { return errors.New("invalid credentials") }
+
+	return nil
 }
