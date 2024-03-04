@@ -11,5 +11,8 @@ func RegisterRoutes(server *gin.Engine) {
 			"message": "pong",
 		})
 	})
+
 	server.POST("/signup", signup)
+	
+	server.GET("/users", getUsers)
 }

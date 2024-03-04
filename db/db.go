@@ -15,7 +15,7 @@ var client *mongo.Client
 var mongoURI = os.Getenv("MONGO_URI")
 var	dbName = os.Getenv("DB_NAME")
 
-// Initialize the MongoDB client and return it
+// Initialize the MongoDB client and return it.
 func InitDB() *mongo.Client {
 	// Use the SetServerAPIOptions() method to set the version of the Stable API on the client
 	serverAPI := options.ServerAPI(options.ServerAPIVersion1)
@@ -36,7 +36,7 @@ func InitDB() *mongo.Client {
 	return client
 }
 
-// Returns a collection from the MongoDB database. Creates it if it doesn't exist
+// Returns a collection from the Mongo database or create and return a collection if it doesn't exist.
 func GetDBCollection(collectionName string) *mongo.Collection {
 	// Check if the client is initialized
 	if client == nil {
