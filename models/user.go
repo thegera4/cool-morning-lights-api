@@ -27,6 +27,9 @@ func (u User) Save() error {
 	if userExists { return errors.New("User already exists") }
 
 	hashedPassword, err := utils.HashPassword(u.Password)
+	if err != nil && err.Error() == "password must be at least 8 characters long" {
+		return errors.New("password must be at least 8 characters long")
+	}
 	if err != nil { return err }
 
 	_, err = collection.InsertOne(ctx, bson.M{

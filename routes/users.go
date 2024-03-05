@@ -1,7 +1,6 @@
 package routes
 
 import (
-	"fmt"
 	"net/http"
 	"github.com/gin-gonic/gin"
 	"github.com/thegera4/cool-morning-lights-api/models"
@@ -15,16 +14,17 @@ func signup(context *gin.Context) {
 	var user models.User
 
 	if err := context.ShouldBindJSON(&user); err != nil {
-		context.JSON(400, gin.H{"error": err.Error()})
+		context.JSON(http.StatusBadRequest, gin.H{"message": "Could not parse request data!"})
 		return
 	}
 
-	if err := user.Save(); err != nil {
-		context.JSON(500, gin.H{"error": "Failed to save user"})
+	err := user.Save(); 
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"message": "Failed to save user"})
 		return
 	}
-
-	context.JSON(201, gin.H{"message": "User created successfully"})
+	
+	context.JSON(http.StatusCreated, gin.H{"message": "User created successfully"})
 }
 
 // Handles the login request for users. Returns a JWT token if the credentials are correct.
@@ -39,7 +39,6 @@ func login(context *gin.Context) {
 
 	err = user.ValidateCredentials()
 	if err != nil {
-		fmt.Println("Error validating credentials: ", err)
 		context.JSON(http.StatusUnauthorized, gin.H{"message": "Could not authenticate user!"})
 		return
 	}
@@ -57,9 +56,9 @@ func login(context *gin.Context) {
 func getUsers(context *gin.Context) {
 	users, err := models.GetAllUsers()
 	if err != nil {
-		context.JSON(500, gin.H{"error": "Failed to get users"})
+		context.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get users"})
 		return
 	}
 
-	context.JSON(200, gin.H{"users": users})
+	context.JSON(http.StatusOK, gin.H{"users": users})
 }
