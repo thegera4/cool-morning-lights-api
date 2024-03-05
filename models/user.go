@@ -15,6 +15,8 @@ type User struct {
 	Email    string `bson:"email" binding:"required"`
 	Password string `bson:"password" binding:"required"`
 	Username string `bson:"username"`
+	Admin  	  bool  `bson:"admin"`
+	Validated bool 	`bson:"validated"`
 }
 
 // Saves a user to the Mongo database if it doesn't exist.
@@ -24,7 +26,14 @@ func (u User) Save() error {
 
 	userExists, err := utils.UserExistsInDb(ctx, collection, u.Email)
 	if err != nil { return err }
-	if userExists { return errors.New("User already exists") }
+	if userExists { return errors.New("user already exists") }
+
+	emailIsValid := utils.IsValidEmail(u.Email)
+	if !emailIsValid { return errors.New("invalid email") }
+
+	usernameExists, err := utils.UsernameExistsInDb(ctx, collection, u.Username)
+	if err != nil { return err }
+	if usernameExists { return errors.New("username already exists") }
 
 	hashedPassword, err := utils.HashPassword(u.Password)
 	if err != nil && err.Error() == "password must be at least 8 characters long" {
@@ -36,6 +45,8 @@ func (u User) Save() error {
 		"email":    u.Email,
 		"password": hashedPassword,
 		"username": u.Username,
+		"admin":    false,
+		"validated": false,
 	})
 	if err != nil { return err }
 
@@ -46,6 +57,8 @@ func (u User) Save() error {
 type UserWithoutPassword struct {
     Email    string `bson:"email"`
     Username string `bson:"username"`
+	Admin    bool   `bson:"admin"`
+	Validated bool  `bson:"validated"`
 }
 
 // Returns all users from the Mongo database without including their passwords.
@@ -54,7 +67,7 @@ func GetAllUsers() ([]UserWithoutPassword, error) {
 	collection := db.GetDBCollection("users")
 	ctx := context.TODO()
 
-	projection := bson.M{"email": 1, "username": 1} // Exclude the password from the query
+	projection := bson.M{"email": 1, "username": 1, "admin": 1, "validated": 1} // Exclude the password from the query
 	cursor, err := collection.Find(ctx, bson.M{}, options.Find().SetProjection(projection))
 	if err != nil { return nil, err }
 
