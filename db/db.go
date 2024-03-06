@@ -69,3 +69,22 @@ func GetUserByEmail(collection *mongo.Collection, email string) (bson.M, error) 
 	}
 	return user, nil
 }
+
+// Returns all users that have the "admin" field set to true.
+func GetAdminUsers(collection *mongo.Collection) ([]bson.M, error) {
+	var users []bson.M
+	cursor, err := collection.Find(context.TODO(), bson.M{"admin": true})
+	if err != nil {
+		return nil, err
+	}
+	defer cursor.Close(context.Background())
+	for cursor.Next(context.Background()) {
+		var user bson.M
+		err := cursor.Decode(&user)
+		if err != nil {
+			return nil, err
+		}
+		users = append(users, user)
+	}
+	return users, nil
+}

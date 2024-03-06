@@ -1,3 +1,4 @@
-### Get all users:
+### Get All Users (protected route that requires a valid JWT token and the user to be an admin)
 GET http://localhost:8080/users
 Content-Type: application/json
+Authorization:
