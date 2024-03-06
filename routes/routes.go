@@ -16,4 +16,10 @@ func RegisterRoutes(server *gin.Engine) {
 	admin := server.Group("/")
 	admin.Use(middlewares.AdminRequired)
 	admin.GET("/users", getUsers)
+	admin.PATCH("/users/makeAdmin", makeAdmin)
+
+	// User Protected routes
+	user := server.Group("/")
+	user.Use(middlewares.Authenticate)
+	// user.PATCH("/users/:id", updateInfo)
 }

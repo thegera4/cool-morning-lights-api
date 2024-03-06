@@ -1,4 +1,4 @@
-### Get All Users (protected route that requires a valid JWT token and the user to be an admin)
+### Get All Users (protected route that requires a valid JWT token and the user to be an admin).
 GET http://localhost:8080/users
 Content-Type: application/json
 Authorization:
@@ -9,4 +9,13 @@ Content-Type: application/json
 
 {
     "email": "test2@email.com"
+}
+
+### Change a user "admin" field to true (protected route that requires a valid JWT token and the user to be an admin).
+PATCH  http://localhost:8080/users/makeAdmin
+Content-Type: application/json
+Authorization:
+
+{
+    "email": "test1@email.com"
 }

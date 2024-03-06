@@ -115,3 +115,18 @@ func ValidateAccount(email string) error {
 
 	return nil
 }
+
+// Changes the user's role to admin by updating the "admin" field to true.
+func MakeUserAdmin(email string) error {
+	collection := db.GetDBCollection("users")
+	ctx := context.TODO()
+
+	userExists, err := utils.UserExistsInDb(ctx, collection, email)
+	if err != nil { return err }
+	if !userExists { return errors.New("User does not exist") }
+
+	_, err = collection.UpdateOne(ctx, bson.M{"email": email}, bson.M{"$set": bson.M{"admin": true}})
+	if err != nil { return err }
+
+	return nil
+}
