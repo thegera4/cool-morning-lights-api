@@ -100,3 +100,18 @@ func (u User) ValidateCredentials() error {
 
 	return nil
 }
+
+// Validates the user's account by changing the "validated" field to true.
+func ValidateAccount(email string) error {
+	collection := db.GetDBCollection("users")
+	ctx := context.TODO()
+
+	userExists, err := utils.UserExistsInDb(ctx, collection, email)
+	if err != nil { return err }
+	if !userExists { return errors.New("User does not exist") }
+
+	_, err = collection.UpdateOne(ctx, bson.M{"email": email}, bson.M{"$set": bson.M{"validated": true}})
+	if err != nil { return err }
+
+	return nil
+}

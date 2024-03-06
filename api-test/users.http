@@ -2,3 +2,11 @@
 GET http://localhost:8080/users
 Content-Type: application/json
 Authorization:
+
+### Change a user "validated" field to true.
+PATCH  http://localhost:8080/users/validate
+Content-Type: application/json
+
+{
+    "email": "test2@email.com"
+}

@@ -10,6 +10,7 @@ func RegisterRoutes(server *gin.Engine) {
 	// Public routes
 	server.POST("/signup", signup)
 	server.POST("/login", login)
+	server.PATCH("/users/validate", validate)
 
 	// Admin Protected routes
 	admin := server.Group("/")
