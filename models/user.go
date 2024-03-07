@@ -24,15 +24,43 @@ func (u User) Save() error {
 	collection := db.GetDBCollection("users")
 	ctx := context.TODO()
 
-	userExists, err := utils.UserExistsInDb(ctx, collection, u.Email)
-	if err != nil { return err }
-	if userExists { return errors.New("user already exists") }
+	// Use channels to communicate the results of each validation
+	emailValidated := make(chan bool)
+	usernameValidated := make(chan bool)
+	userValidated := make(chan bool)
 
-	emailIsValid := utils.IsValidEmail(u.Email)
+	// Concurrently validate the email, username and password
+	go func() { emailValidated <- utils.IsValidEmail(u.Email) }()
+
+	go func() {
+		exists, err := utils.UsernameExistsInDb(ctx, collection, u.Username)
+		if err != nil { 
+			usernameValidated <- false 
+			return
+		}
+		usernameValidated <- exists
+	}()
+
+	go func() {
+		exists, err := utils.UserExistsInDb(ctx, collection, u.Email)
+		if err != nil {
+			userValidated <- false
+			return
+		}
+		userValidated <- exists
+	}()
+
+	// Wait for the results of the validations and close the channels
+	emailIsValid := <-emailValidated
+	close(emailValidated)
+	usernameExists := <-usernameValidated
+	close(usernameValidated)
+	userExists := <-userValidated
+	close(userValidated)
+
+	// Check validation results
 	if !emailIsValid { return errors.New("invalid email") }
-
-	usernameExists, err := utils.UsernameExistsInDb(ctx, collection, u.Username)
-	if err != nil { return err }
+	if userExists { return errors.New("user already exists") }
 	if usernameExists { return errors.New("username already exists") }
 
 	hashedPassword, err := utils.HashPassword(u.Password)
