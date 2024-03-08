@@ -10,7 +10,7 @@ import (
 /* Request Handlers */
 
 // Handles the signup (register) request for new users.
-func signup(context *gin.Context) {
+func Signup(context *gin.Context) {
 	var user models.User
 
 	if err := context.ShouldBindJSON(&user); err != nil {

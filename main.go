@@ -8,17 +8,18 @@ import (
 	"github.com/gin-contrib/cors"
 )
 
-//NOTE 1 framework for rest api: go get -u github.com/gin-gonic/gin
-//NOTE 2 use the MongoDB driver: go get go.mongodb.org/mongo-driver/mongo
-//NOTE 4 run "go get github.com/golang-jwt/jwt/v5" to get the jwt package
-//NOTE 5 run "go get golang.org/x/crypto/bcrypt" to get the bcrypt package
-//NOTE 6 run "go get github.com/gin-contrib/cors" to get the cors package
-
 func main() {
 	db.InitDB()
 	
-	server := gin.Default()
+	server := setupServer()
 
+	routes.RegisterRoutes(server)
+
+	server.Run(":8080")
+}
+
+func setupServer() *gin.Engine {
+	server := gin.Default()
 	server.Use(cors.New(cors.Config{
 		AllowOrigins:     []string{"http://localhost:3000"},
 		AllowMethods:     []string{"PUT", "PATCH", "DELETE", "GET", "POST"},
@@ -30,8 +31,5 @@ func main() {
 		},
 		MaxAge: 12 * time.Hour,
 	}))
-
-	routes.RegisterRoutes(server)
-
-	server.Run(":8080")
+	return server
 }
