@@ -126,7 +126,7 @@ func updateInfo(context *gin.Context) {
 
 	err := user.UpdateUserInfo()
 	if err != nil {
-		context.JSON(http.StatusInternalServerError, gin.H{"message": "Failed to update user info" + err.Error()})
+		context.JSON(http.StatusInternalServerError, gin.H{"message": "Failed to update user info"})
 		return
 	}
 
