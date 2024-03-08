@@ -102,3 +102,33 @@ func makeAdmin(context *gin.Context) {
 
 	context.JSON(http.StatusOK, gin.H{"message": "User is now an admin"})
 }
+
+// Handles the request to update a user's information.
+func updateInfo(context *gin.Context) {
+	// The user can only update their username and/or password
+	var updateData struct {
+		Username string `json:"username"`
+		Password string `json:"password"`
+	}
+
+	if err := context.ShouldBindJSON(&updateData); err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{"message": "Could not parse request data!"})
+		return
+	}
+
+	email, _ := context.Get("email")
+
+	user := models.User{
+		Email: email.(string),
+		Username: updateData.Username,
+		Password: updateData.Password,
+	}
+
+	err := user.UpdateUserInfo()
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"message": "Failed to update user info" + err.Error()})
+		return
+	}
+
+	context.JSON(http.StatusOK, gin.H{"message": "Updated successfully!"})
+}

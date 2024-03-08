@@ -60,10 +60,20 @@ func GetDBCollection(collectionName string) *mongo.Collection {
 	return collection
 }
 
-// Return a user from the database if it exists.
+// Return a user from the database if it exists, searching by email.
 func GetUserByEmail(collection *mongo.Collection, email string) (bson.M, error) {
 	var user bson.M
 	err := collection.FindOne(context.TODO(), bson.M{"email": email}).Decode(&user)
+	if err != nil {
+		return nil, err
+	}
+	return user, nil
+}
+
+// Return a user from the database if it exists, searching by id.
+func GetUserById(collection *mongo.Collection, id string) (bson.M, error) {
+	var user bson.M
+	err := collection.FindOne(context.TODO(), bson.M{"_id": id}).Decode(&user)
 	if err != nil {
 		return nil, err
 	}

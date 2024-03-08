@@ -1,7 +1,25 @@
-### Get All Users (protected route that requires a valid JWT token and the user to be an admin).
+############################################
+### Protected routes for administrators. ###
+############################################
+
+### Get All Users.
 GET http://localhost:8080/users
 Content-Type: application/json
 Authorization:
+
+### Change a user "admin" field to true.
+PATCH  http://localhost:8080/users/makeAdmin
+Content-Type: application/json
+Authorization:
+
+{
+    "email": "test1@email.com"
+}
+
+
+############################################
+### Protected routes for regular users. ###
+############################################
 
 ### Change a user "validated" field to true.
 PATCH  http://localhost:8080/users/validate
@@ -11,11 +29,11 @@ Content-Type: application/json
     "email": "test2@email.com"
 }
 
-### Change a user "admin" field to true (protected route that requires a valid JWT token and the user to be an admin).
-PATCH  http://localhost:8080/users/makeAdmin
+### Change the user information
+PATCH  http://localhost:8080/users/updateInfo
 Content-Type: application/json
-Authorization:
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3QzQGVtYWlsLmNvbSIsImV4cCI6MTcwOTg2MDAxNn0.gPbXKX0-YBmbmaO9mylPPRbG0W5m_Y2HJYN0GHSuAOc
 
 {
-    "email": "test1@email.com"
+    "password": "test4444"
 }

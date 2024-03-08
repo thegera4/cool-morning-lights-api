@@ -21,5 +21,5 @@ func RegisterRoutes(server *gin.Engine) {
 	// User Protected routes
 	user := server.Group("/")
 	user.Use(middlewares.Authenticate)
-	// user.PATCH("/users/:id", updateInfo)
+	user.PATCH("/users/updateInfo", updateInfo)
 }
