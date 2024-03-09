@@ -19,7 +19,7 @@ func RegisterRoutes(server *gin.Engine) {
 	admin.GET("/users", getUsers)
 	admin.PATCH("/users/makeAdmin", makeAdmin)
 	//admin.POST("/products", createProduct)
-	//admin.DELETE("/products/:id", deleteProduct)
+	admin.DELETE("/products/:id", deleteProduct)
 	//admin.PUT("/products/:id", updateProduct)
 
 	// User Protected routes

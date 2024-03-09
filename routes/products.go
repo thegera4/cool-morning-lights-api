@@ -18,3 +18,15 @@ func getProducts(context *gin.Context) {
 
 	context.JSON(http.StatusOK, products)
 }
+
+// Handles the request to delete a product.
+func deleteProduct(context *gin.Context) {
+	id := context.Param("id")
+	err := models.DeleteOneProduct(id)
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete product"})
+		return
+	}
+
+	context.JSON(http.StatusOK, gin.H{"message": "Product deleted"})
+}

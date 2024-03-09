@@ -5,6 +5,7 @@ import (
 	"github.com/thegera4/cool-morning-lights-api/db"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 // Product struct to represent a product in the application.
@@ -25,14 +26,25 @@ func GetAllProducts() ([]Product, error) {
 
 	var products []Product
 	cursor, err := collection.Find(ctx, bson.D{{}}, options.Find())
-	if err != nil {
-		return products, err
-	}
+	if err != nil { return products, err }
 
 	err = cursor.All(ctx, &products)
-	if err != nil {
-		return products, err
-	}
+	if err != nil { return products, err }
 
 	return products, nil
+}
+
+// Deletes a product from the database.
+func DeleteOneProduct(id string) error {
+	collection := db.GetDBCollection("products")
+	ctx := context.TODO()
+
+	// Convert string Id to ObjectId
+	objectID, err := primitive.ObjectIDFromHex(id)
+	if err != nil { return err }
+
+	_, err = collection.DeleteOne(ctx, bson.M{"_id": objectID})
+	if err != nil { return err }
+
+	return nil
 }
