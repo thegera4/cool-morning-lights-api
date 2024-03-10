@@ -19,6 +19,24 @@ func getProducts(context *gin.Context) {
 	context.JSON(http.StatusOK, products)
 }
 
+// Handles the request to create a product.
+func createProduct(context *gin.Context) {
+	var product models.Product
+	err := context.BindJSON(&product)
+	if err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request"})
+		return
+	}
+
+	err = models.CreateOneProduct(&product)
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create product"})
+		return
+	}
+
+	context.JSON(http.StatusCreated, product)
+}
+
 // Handles the request to delete a product.
 func deleteProduct(context *gin.Context) {
 	id := context.Param("id")

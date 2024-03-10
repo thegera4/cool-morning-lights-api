@@ -10,13 +10,14 @@ import (
 
 // Product struct to represent a product in the application.
 type Product struct {
-	Id          string  `bson:"_id,omitempty"` // The ID field is treated as an ObjectId to work with MongoDB
+	Id          string  `bson:"_id,omitempty"`
 	Name        string  `bson:"name" binding:"required"`
 	Description string  `bson:"description" binding:"required"`
 	Price       float64 `bson:"price" binding:"required"`
 	Stock       int     `bson:"stock" binding:"required"`
-	Pictures   []string `bson:"pictures"`
+	Pictures    []string `bson:"pictures"`
 	Stores      []string `bson:"stores"`
+	Active	  	bool    `bson:"active" default:"true"`
 }
 
 // Returns the collection of products from the database.
@@ -34,12 +35,23 @@ func GetAllProducts() ([]Product, error) {
 	return products, nil
 }
 
+// Creates a product in the database.
+func CreateOneProduct(product *Product) error {
+	collection := db.GetDBCollection("products")
+	ctx := context.TODO()
+
+	_, err := collection.InsertOne(ctx, product)
+	if err != nil { return err }
+
+	return nil
+}
+
 // Deletes a product from the database.
 func DeleteOneProduct(id string) error {
 	collection := db.GetDBCollection("products")
 	ctx := context.TODO()
 
-	// Convert string Id to ObjectId
+	// Convert string Id to ObjectId for MongoDB
 	objectID, err := primitive.ObjectIDFromHex(id)
 	if err != nil { return err }
 

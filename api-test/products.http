@@ -2,10 +2,26 @@
 ### Protected routes for administrators. ###
 ############################################
 
+### Create one product.
+POST http://localhost:8080/products
+Content-Type: application/json
+Authorization: 
+
+{
+    "name": "Party Neon Light",
+    "description": "Nice product for your parties.",
+    "price": 200,
+    "stock": 5,
+    "pictures": [],
+    "stores": [],
+    "categories": []   
+}
+
 ### Delete one product.
 DELETE http://localhost:8080/products/65eb9525ac19a50087e8769f
 Content-Type: application/json
 Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3QxQGVtYWlsLmNvbSIsImV4cCI6MTcwOTk2MTY1M30.ZPMZAom8errRLCm2nAlwFBqfRtLgCjYkrTqjOTUw9sk
+
 
 ############################################
 ### Protected routes for regular users. ###
