@@ -75,3 +75,9 @@ func UpdateOneProduct(id string, product *Product) error {
 
 	return nil
 }
+
+// Updates the stock of a product in the database.
+func UpdateStock(id string, rentedQty int) error {
+	//TODO: Implement this method after checking best practices to send request data
+	return nil
+}

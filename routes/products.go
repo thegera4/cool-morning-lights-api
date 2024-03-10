@@ -67,3 +67,8 @@ func updateProduct(context *gin.Context) {
 
 	context.JSON(http.StatusOK, product)
 }
+
+// Handles the request to rent products.
+func rentProducts(context *gin.Context) {
+	//TODO: Implement this function by checking if first best practices to send request data
+}

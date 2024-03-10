@@ -26,5 +26,5 @@ func RegisterRoutes(server *gin.Engine) {
 	user := server.Group("/")
 	user.Use(middlewares.Authenticate)
 	user.PATCH("/users/updateInfo", updateInfo)
-	//user.PATCH("/products/:id", rentProduct)
+	user.PATCH("/products", rentProducts)
 }

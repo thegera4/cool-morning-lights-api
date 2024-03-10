@@ -36,6 +36,15 @@ Authorization:
 ### Protected routes for regular users. ###
 ############################################
 
+### Rent products.
+PATCH http://localhost:8080/products/
+Content-Type: application/json
+Authorization:
+
+{
+    "65eb9525ac19a50087e8769f": 2,
+    "65eb9525ac19a50087e8769f": 1
+}
 
 ############################################
 ###            Public routes.           ###
