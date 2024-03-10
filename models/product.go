@@ -17,6 +17,7 @@ type Product struct {
 	Stock       int     `bson:"stock" binding:"required"`
 	Pictures    []string `bson:"pictures"`
 	Stores      []string `bson:"stores"`
+	Categories  []string `bson:"categories"`
 	Active	  	bool    `bson:"active" default:"true"`
 }
 
@@ -56,6 +57,20 @@ func DeleteOneProduct(id string) error {
 	if err != nil { return err }
 
 	_, err = collection.DeleteOne(ctx, bson.M{"_id": objectID})
+	if err != nil { return err }
+
+	return nil
+}
+
+// Updates a product in the database.
+func UpdateOneProduct(id string, product *Product) error {
+	collection := db.GetDBCollection("products")
+	ctx := context.TODO()
+
+	objectID, err := primitive.ObjectIDFromHex(id)
+	if err != nil { return err }
+
+	_, err = collection.UpdateOne(ctx, bson.M{"_id": objectID}, bson.M{"$set": product})
 	if err != nil { return err }
 
 	return nil

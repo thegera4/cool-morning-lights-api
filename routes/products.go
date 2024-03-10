@@ -48,3 +48,22 @@ func deleteProduct(context *gin.Context) {
 
 	context.JSON(http.StatusOK, gin.H{"message": "Product deleted"})
 }
+
+// Handles the request to update a product.
+func updateProduct(context *gin.Context) {
+	id := context.Param("id")
+	var product models.Product
+	err := context.BindJSON(&product)
+	if err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request"})
+		return
+	}
+
+	err = models.UpdateOneProduct(id, &product)
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update product"})
+		return
+	}
+
+	context.JSON(http.StatusOK, product)
+}

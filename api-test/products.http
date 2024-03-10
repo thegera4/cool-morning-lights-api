@@ -22,6 +22,15 @@ DELETE http://localhost:8080/products/65eb9525ac19a50087e8769f
 Content-Type: application/json
 Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3QxQGVtYWlsLmNvbSIsImV4cCI6MTcwOTk2MTY1M30.ZPMZAom8errRLCm2nAlwFBqfRtLgCjYkrTqjOTUw9sk
 
+### Update one product.
+POST http://localhost:8080/products/65eb9525ac19a50087e8769f
+Content-Type: application/json
+Authorization: 
+
+{
+    "price": 250,
+    "stock": 8,
+}
 
 ############################################
 ### Protected routes for regular users. ###
