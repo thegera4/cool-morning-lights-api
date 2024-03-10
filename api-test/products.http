@@ -5,16 +5,16 @@
 ### Create one product.
 POST http://localhost:8080/products
 Content-Type: application/json
-Authorization: 
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRoZWdlcmE0QGhvdG1haWwuY29tIiwiZXhwIjoxNzEwMTA1MDc3fQ.1brWXpK1F7IdMiMdS7KWZQY03KpHV1NdJAliJIO-SHs
 
 {
-    "name": "Party Neon Light",
-    "description": "Nice product for your parties.",
-    "price": 200,
+    "name": "Congratulations!",
+    "description": "Para felicitar a alguien en cualquier ocasión especial.",
+    "price": 400,
     "stock": 5,
-    "pictures": [],
-    "stores": [],
-    "categories": []   
+    "store": "5eb9525ac19a50087e8769f",
+    "pictures": ["https://tse3.mm.bing.net/th?id=OIP.O6ivhClgMH62R3okAxYsqgHaFD&pid=Api&P=0&h=180"],
+    "categories": ["Felicidades", "Ocasiones especiales"]   
 }
 
 ### Delete one product.
@@ -23,13 +23,13 @@ Content-Type: application/json
 Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3QxQGVtYWlsLmNvbSIsImV4cCI6MTcwOTk2MTY1M30.ZPMZAom8errRLCm2nAlwFBqfRtLgCjYkrTqjOTUw9sk
 
 ### Update one product.
-POST http://localhost:8080/products/65eb9525ac19a50087e8769f
+PUT http://localhost:8080/products/65ee15455072ed5411bd28ae
 Content-Type: application/json
-Authorization: 
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRoZWdlcmE0QGhvdG1haWwuY29tIiwiZXhwIjoxNzEwMTA4NzM5fQ.LhFr4KT8N3PiMat_3wPqhJOw9BCM8dDAA2nY-AM8C3s
 
 {
-    "price": 250,
-    "stock": 8,
+    "price": 539.5,
+    "stock": 25
 }
 
 ############################################
@@ -42,8 +42,13 @@ Content-Type: application/json
 Authorization:
 
 {
-    "65eb9525ac19a50087e8769f": 2,
-    "65eb9525ac19a50087e8769f": 1
+    [
+        {
+            "id": "65eb9525ac19a50087e8769f",
+            "quantity": 2,
+            "store": "5eb9525ac19a50087e8769f",
+        },
+    ]
 }
 
 ############################################
