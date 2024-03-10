@@ -32,7 +32,7 @@ Content-Type: application/json
 ### Change the user information
 PATCH  http://localhost:8080/users/updateInfo
 Content-Type: application/json
-Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3QzQGVtYWlsLmNvbSIsImV4cCI6MTcwOTg2MDAxNn0.gPbXKX0-YBmbmaO9mylPPRbG0W5m_Y2HJYN0GHSuAOc
+Authorization:
 
 {
     "password": "test4444"

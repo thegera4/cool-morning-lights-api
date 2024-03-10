@@ -5,7 +5,7 @@
 ### Create one product.
 POST http://localhost:8080/products
 Content-Type: application/json
-Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRoZWdlcmE0QGhvdG1haWwuY29tIiwiZXhwIjoxNzEwMTA1MDc3fQ.1brWXpK1F7IdMiMdS7KWZQY03KpHV1NdJAliJIO-SHs
+Authorization: 
 
 {
     "name": "Congratulations!",
@@ -20,12 +20,12 @@ Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRoZWdlcmE0QGhv
 ### Delete one product.
 DELETE http://localhost:8080/products/65eb9525ac19a50087e8769f
 Content-Type: application/json
-Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3QxQGVtYWlsLmNvbSIsImV4cCI6MTcwOTk2MTY1M30.ZPMZAom8errRLCm2nAlwFBqfRtLgCjYkrTqjOTUw9sk
+Authorization: 
 
 ### Update one product.
 PUT http://localhost:8080/products/65ee15455072ed5411bd28ae
 Content-Type: application/json
-Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRoZWdlcmE0QGhvdG1haWwuY29tIiwiZXhwIjoxNzEwMTA4NzM5fQ.LhFr4KT8N3PiMat_3wPqhJOw9BCM8dDAA2nY-AM8C3s
+Authorization: 
 
 {
     "price": 539.5,
