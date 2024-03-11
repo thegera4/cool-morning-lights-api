@@ -36,18 +36,21 @@ Authorization:
 ### Protected routes for regular users. ###
 ############################################
 
-### Rent products.
-PATCH http://localhost:8080/products/
+### Rent products. This endpoint is going to be used by the order when the user rent products to update the available stock.
+PATCH http://localhost:8080/products
 Content-Type: application/json
-Authorization:
+Authorization: 
 
 {
-    [
+    "rentedProducts":[
+        {
+            "id": "65ee15455072ed5411bd28ae",
+            "quantity": 2
+        },
         {
             "id": "65eb9525ac19a50087e8769f",
-            "quantity": 2,
-            "store": "5eb9525ac19a50087e8769f",
-        },
+            "quantity": 2
+        }
     ]
 }
 

@@ -35,6 +35,17 @@ type ProductUpdate struct {
 	Active	  	bool    `bson:"active"`
 }
 
+// Struct to represent the data of a product that is going to be rented. All fields are required.
+type RentedProduct struct {
+	ID       string `bson:"id" binding:"required"`
+	Quantity int    `bson:"quantity" binding:"required"`
+}
+
+// Struct to represent a slice of products that are going to be rented.
+type RentRequest struct {
+	RentedProducts []RentedProduct `json:"rentedProducts" binding:"required"`
+}
+
 // Returns the collection of products from the database.
 func GetAllProducts() ([]Product, error) {
 	collection := db.GetDBCollection("products")
@@ -102,8 +113,35 @@ func UpdateOneProduct(id string, product map[string]interface{}) error {
 	return nil
 }
 
-// Updates the stock of a product in the database.
-func UpdateStock(id string, rentedQty int) error {
-	//TODO: Implement this method after checking best practices to send request data
+// Updates the stock of a product in the database when an order is created.
+func UpdateStockWithRent(rentedProducts []RentedProduct) error {
+	collection := db.GetDBCollection("products")
+	ctx := context.TODO()
+
+	// Check if the rentedProducts slice is empty
+	if len(rentedProducts) == 0 { return errors.New("no products to rent") }
+
+	for _, rentedProduct := range rentedProducts {
+		//Check if the id and quantity fields are empty
+		if rentedProduct.ID == "" || rentedProduct.Quantity == 0 { return errors.New("invalid data to rent a product") }
+
+		// Convert the string id to ObjectId
+		objectID, err := primitive.ObjectIDFromHex(rentedProduct.ID)
+		if err != nil { return err }
+
+		// Get the product from the database
+		var product Product
+		err = collection.FindOne(ctx, bson.M{"_id": objectID}).Decode(&product)
+		if err != nil { return err }
+
+		// Check if the stock is enough
+		if product.Stock < rentedProduct.Quantity { return errors.New("not enough stock") }
+
+		// Update the stock
+		product.Stock -= rentedProduct.Quantity
+		_, err = collection.UpdateOne(ctx, bson.M{"_id": objectID}, bson.M{"$set": bson.M{"stock": product.Stock}})
+		if err != nil { return err }
+	}
+
 	return nil
 }

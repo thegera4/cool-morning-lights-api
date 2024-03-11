@@ -2,7 +2,6 @@ package routes
 
 import (
 	"net/http"
-
 	"github.com/gin-gonic/gin"
 	"github.com/thegera4/cool-morning-lights-api/models"
 	"github.com/thegera4/cool-morning-lights-api/utils"
@@ -83,5 +82,18 @@ func updateProduct(context *gin.Context) {
 
 // Handles the request to rent products.
 func rentProducts(context *gin.Context) {
-	//TODO: Implement this function by checking if first best practices to send request data
+	var rentRequest models.RentRequest
+	err := context.BindJSON(&rentRequest)
+	if err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request"})
+		return
+	}
+
+	err = models.UpdateStockWithRent(rentRequest.RentedProducts)
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to rent product(s)"})
+		return
+	}
+
+	context.JSON(http.StatusOK, gin.H{"message": "Product(s) rented successfully"})
 }
