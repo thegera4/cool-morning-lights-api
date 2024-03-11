@@ -1,15 +1,20 @@
 package models
 
 import (
+	"context"
 
+	"github.com/thegera4/cool-morning-lights-api/db"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-// Product struct to represent a store in the application.
+// Store struct to represent a store in the application.
 type Store struct {
 	Id          string  `bson:"_id,omitempty"`
 	Name        string  `bson:"name" binding:"required"`
 	Address    	string  `bson:"location" binding:"required"`
-	ZipCode		string  `bson:"zipCode" binding:"required"`
+	ZipCode		int32  `bson:"zipCode" binding:"required"`
 	City		string  `bson:"city" binding:"required"`
 	State 	 	string  `bson:"state" binding:"required"`
 	Phone       string  `bson:"phone" binding:"required"`
@@ -18,4 +23,33 @@ type Store struct {
 	CloseTime   string  `bson:"closeTime" binding:"required"`
 	WorkingDays []string `bson:"workingDays" binding:"required"`
 	Active	    bool    `bson:"active"`
+}
+ 
+// Returns the collection of stores from the database.
+func GetAllStores() ([]Store, error) {
+	collection := db.GetDBCollection("stores")
+	ctx := context.TODO()
+
+	var stores []Store
+	cursor, err := collection.Find(ctx, bson.D{{}}, options.Find())
+	if err != nil { return stores, err }
+
+	err = cursor.All(ctx, &stores)
+	if err != nil { return stores, err }
+
+	return stores, nil
+}
+
+// Deletes a store from the database.
+func DeleteOneStore(id string) error {
+	collection := db.GetDBCollection("stores")
+	ctx := context.TODO()
+
+	objectId, err := primitive.ObjectIDFromHex(id)
+	if err != nil { return err }
+
+	_, err = collection.DeleteOne(ctx, bson.M{"_id": objectId})
+	if err != nil { return err }
+
+	return nil
 }

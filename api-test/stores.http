@@ -1,0 +1,22 @@
+############################################
+### Protected routes for administrators. ###
+############################################
+
+### Delete one store.
+DELETE http://localhost:8080/api/stores/65ef6278fb593e5803dca108
+Content-Type: application/json
+Authorization: 
+
+############################################
+### Protected routes for regular users. ###
+############################################
+
+
+
+############################################
+###            Public routes.           ###
+############################################
+
+### Get all stores.
+GET http://localhost:8080/api/stores
+Content-Type: application/json

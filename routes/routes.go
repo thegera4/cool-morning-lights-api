@@ -12,6 +12,7 @@ func RegisterRoutes(server *gin.Engine) {
 	server.POST("/login", login)
 	server.PATCH("/users/validate", validate)
 	server.GET("/products", getProducts)
+	server.GET("/api/stores", getStores)
 
 	// Admin Protected routes
 	admin := server.Group("/")
@@ -21,6 +22,7 @@ func RegisterRoutes(server *gin.Engine) {
 	admin.POST("/products", createProduct)
 	admin.DELETE("/products/:id", deleteProduct)
 	admin.PUT("/products/:id", updateProduct)
+	admin.DELETE("/api/stores/:id", deleteStore)
 
 	// User Protected routes
 	user := server.Group("/")
