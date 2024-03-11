@@ -22,6 +22,7 @@ func RegisterRoutes(server *gin.Engine) {
 	admin.POST("/products", createProduct)
 	admin.DELETE("/products/:id", deleteProduct)
 	admin.PUT("/products/:id", updateProduct)
+	admin.POST("/api/stores", createStore)
 	admin.DELETE("/api/stores/:id", deleteStore)
 
 	// User Protected routes

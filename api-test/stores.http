@@ -2,6 +2,24 @@
 ### Protected routes for administrators. ###
 ############################################
 
+### Create one store.
+POST http://localhost:8080/api/stores
+Content-Type: application/json
+Authorization: 
+
+{
+    "name": "Store 11",
+    "address": "Test address 123 col. Test",
+    "zipCode": 12345,
+    "city": "Test city",
+    "state": "Test state",
+    "phone": "1234567890",
+    "email": "store1@email.com",
+    "openTime": "08:00",
+    "closeTime": "19:00",
+    "workingDays": ["Lun", "Mar", "Mie", "Jue", "Vie", "Sab"]
+}
+
 ### Delete one store.
 DELETE http://localhost:8080/api/stores/65ef6278fb593e5803dca108
 Content-Type: application/json

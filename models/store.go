@@ -2,8 +2,9 @@ package models
 
 import (
 	"context"
-
+	"errors"
 	"github.com/thegera4/cool-morning-lights-api/db"
+	"github.com/thegera4/cool-morning-lights-api/utils"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -11,7 +12,7 @@ import (
 
 // Store struct to represent a store in the application.
 type Store struct {
-	Id          string  `bson:"_id,omitempty"`
+	ID          primitive.ObjectID  `bson:"_id,omitempty"`
 	Name        string  `bson:"name" binding:"required"`
 	Address    	string  `bson:"location" binding:"required"`
 	ZipCode		int32  `bson:"zipCode" binding:"required"`
@@ -49,6 +50,21 @@ func DeleteOneStore(id string) error {
 	if err != nil { return err }
 
 	_, err = collection.DeleteOne(ctx, bson.M{"_id": objectId})
+	if err != nil { return err }
+
+	return nil
+}
+
+// Creates a store in the database.
+func CreateOneStore(store *Store) error {
+	collection := db.GetDBCollection("stores")
+	ctx := context.TODO()
+
+	existingStore, err := utils.StoreExistsInDb(ctx, collection, store.Name)
+	if err != nil { return err }
+	if existingStore { return errors.New("store already exists") }
+
+	_, err = collection.InsertOne(ctx, store)
 	if err != nil { return err }
 
 	return nil

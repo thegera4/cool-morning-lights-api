@@ -28,3 +28,23 @@ func deleteStore(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, gin.H{"message": "Store deleted successfully"})
 }
+
+// Handles the request to create a store.
+func createStore(c *gin.Context) {
+	var store models.Store
+	err := c.BindJSON(&store)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request"})
+		return
+	}
+
+	store.Active = true
+
+	err = models.CreateOneStore(&store)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create store"})
+		return
+	}
+
+	c.JSON(http.StatusCreated, gin.H{"message": "Store created successfully"})
+}
