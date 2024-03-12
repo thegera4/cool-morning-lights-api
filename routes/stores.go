@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"github.com/gin-gonic/gin"
 	"github.com/thegera4/cool-morning-lights-api/models"
+	"github.com/thegera4/cool-morning-lights-api/utils"
 )
 
 /* Request Handlers */
@@ -47,4 +48,30 @@ func createStore(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusCreated, gin.H{"message": "Store created successfully"})
+}
+
+// Handles the request to update a store.
+func updateStore(c *gin.Context) {
+	id := c.Param("id")
+	var store map[string]interface{}
+
+	err := c.BindJSON(&store)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request"})
+		return
+	} 
+
+	validUpdate := utils.StoreUpdateIsValid(store)
+	if !validUpdate { 
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request" + err.Error()})
+		return
+	}
+
+	err = models.UpdateOneStore(id, store)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update store"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Store updated successfully"})
 }

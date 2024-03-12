@@ -69,3 +69,25 @@ func CreateOneStore(store *Store) error {
 
 	return nil
 }
+
+// Updates a store in the database.
+func UpdateOneStore(id string, store map[string]interface{}) error {
+	collection := db.GetDBCollection("stores")
+	ctx := context.TODO()
+
+	// Check if there are fields to update
+	if len(store) == 0 { return errors.New("no fields to update") }
+
+	// Change the type of the zipCode field to int
+	if zipCode, ok := store["zipCode"]; ok {
+		store["zipCode"] = int32(zipCode.(float64))
+	}
+
+	objectId, err := primitive.ObjectIDFromHex(id)
+	if err != nil { return err }
+
+	_, err = collection.UpdateOne(ctx, bson.M{"_id": objectId}, bson.M{"$set": store})
+	if err != nil { return err }
+
+	return nil
+}
