@@ -63,7 +63,7 @@ func updateStore(c *gin.Context) {
 
 	validUpdate := utils.StoreUpdateIsValid(store)
 	if !validUpdate { 
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request" + err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request"})
 		return
 	}
 
