@@ -1,0 +1,18 @@
+############################################
+### Protected routes for administrators. ###
+############################################
+
+### Get all orders
+GET http://localhost:8080/api/orders
+Content-Type: application/json
+Authorization: 
+
+### Delete an order
+DELETE http://localhost:8080/api/orders/65f35ae651436b15d85bc4d0
+Content-Type: application/json
+Authorization: 
+
+############################################
+### Protected routes for regular users. ###
+############################################
+

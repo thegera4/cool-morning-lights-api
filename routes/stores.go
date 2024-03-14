@@ -13,7 +13,7 @@ import (
 func getStores(c *gin.Context) {
 	stores, err := models.GetAllStores()
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not get stores"})
 		return
 	}
 	c.JSON(http.StatusOK, stores)
