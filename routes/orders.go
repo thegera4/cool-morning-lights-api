@@ -3,6 +3,7 @@ package routes
 import (
 	"net/http"
 	"github.com/gin-gonic/gin"
+	"github.com/thegera4/cool-morning-lights-api/db"
 	"github.com/thegera4/cool-morning-lights-api/models"
 )
 
@@ -27,4 +28,28 @@ func deleteOrder(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"message": "Order deleted successfully"})
+}
+
+// Handles the request to create an order.
+func createOrder(c *gin.Context) {
+	var order models.Order
+	err := c.BindJSON(&order)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request" + err.Error()})
+		return
+	}
+
+	loggedInUser := c.GetString("email")
+
+	// TODO:concurrency
+	usersCollection := db.GetDBCollection("users")
+	productsCollection := db.GetDBCollection("products")
+
+	err = models.CreateOneOrder(&order, loggedInUser, usersCollection, productsCollection)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not create order"})
+		return
+	}
+
+	c.JSON(http.StatusCreated, gin.H{"message": "Order created successfully"})
 }

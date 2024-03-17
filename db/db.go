@@ -7,6 +7,7 @@ import (
 
 	_ "github.com/joho/godotenv/autoload"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -97,4 +98,18 @@ func GetAdminUsers(collection *mongo.Collection) ([]bson.M, error) {
 		users = append(users, user)
 	}
 	return users, nil
+}
+
+// Returns a product from the database if it exists, searching by id.
+func GetProductById(collection *mongo.Collection, id string) (bson.M, error) {
+	var product bson.M
+	objectID, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return nil, err
+	}
+	err = collection.FindOne(context.TODO(), bson.M{"_id": objectID}).Decode(&product)
+	if err != nil {
+		return nil, err
+	}
+	return product, nil
 }

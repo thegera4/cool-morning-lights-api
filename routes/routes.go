@@ -33,4 +33,5 @@ func RegisterRoutes(server *gin.Engine) {
 	user.Use(middlewares.Authenticate)
 	user.PATCH("/users/updateInfo", updateInfo)
 	user.PATCH("/products", rentProducts)
+	user.POST("/api/orders", createOrder)
 }

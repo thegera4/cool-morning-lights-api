@@ -16,3 +16,23 @@ Authorization:
 ### Protected routes for regular users. ###
 ############################################
 
+### Create an order
+POST http://localhost:8080/api/orders
+Content-Type: application/json
+Authorization: 
+
+{
+    "products": [
+        {
+        "product": "65eb82bbac19a50087e8769d",
+        "quantity": 2
+        },
+        {
+        "product": "65ee15455072ed5411bd28ae",
+        "quantity": 1
+        }
+    ],
+    "store": "65ef5c8cfb593e5803dca107",
+    "end": "20/Noviembre/2024",
+    "start": "21/Noviembre/2024"
+}
