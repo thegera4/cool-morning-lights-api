@@ -44,8 +44,9 @@ func createOrder(c *gin.Context) {
 	// TODO:concurrency
 	usersCollection := db.GetDBCollection("users")
 	productsCollection := db.GetDBCollection("products")
+	ordersCollection := db.GetDBCollection("orders")
 
-	err = models.CreateOneOrder(&order, loggedInUser, usersCollection, productsCollection)
+	err = models.CreateOneOrder(&order, loggedInUser, ordersCollection, usersCollection, productsCollection)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not create order"})
 		return

@@ -19,6 +19,7 @@ type Order struct {
 	Store     string 			  `json:"store" bson:"store" binding:"required"`
 	Start	  string              `json:"start" bson:"start" binding:"required"`
 	End		  string              `json:"end" bson:"end" binding:"required"`
+	Paid      bool                `json:"paid" bson:"paid"`
 }
 
 // Struct that represents a product in an order.
@@ -57,17 +58,17 @@ func DeleteOneOrder(id string) error {
 }
 
 // Creates an order in the database.
-func CreateOneOrder(order *Order, loggedInUser string, usersCollection *mongo.Collection, productsCollection *mongo.Collection) error {
-	ordersCollection := db.GetDBCollection("orders")
+func CreateOneOrder(order *Order, loggedInUser string, ordersCollection *mongo.Collection, 
+usersCollection *mongo.Collection, productsCollection *mongo.Collection) error {
 	ctx := context.TODO()
+	order.Paid = false // set the paid field to false automatically
 
 	//get the user id from the email
 	userInfo, err := db.GetUserByEmail(usersCollection, loggedInUser)
 	if err != nil { return err }
 	if userInfo == nil { return errors.New("user not found") }
 
-	// set the user id in the order object to automatically link the order to the user
-	order.UserID = userInfo["_id"].(primitive.ObjectID)
+	order.UserID = userInfo["_id"].(primitive.ObjectID) // set the user id in the order object automatically
 
 	// calculate the total of the order based on the products and their quantities
 	var total float64
@@ -75,7 +76,6 @@ func CreateOneOrder(order *Order, loggedInUser string, usersCollection *mongo.Co
 		productInfo, err := db.GetProductById(productsCollection, product.Product)
 		if err != nil { return err }
 		if productInfo == nil { return errors.New("product not found") }
-
 		total += productInfo["price"].(float64) * float64(product.Quantity)
 	}
 
