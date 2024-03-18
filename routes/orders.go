@@ -65,11 +65,29 @@ func updateOrder(c *gin.Context) {
 		return
 	}
 
-	err = models.ChangePaidStatus(id, &paidStatus)
+	ordersCollection := db.GetDBCollection("orders")
+	err = models.ChangePaidStatus(id, &paidStatus, ordersCollection)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not update order"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not update order" + err.Error()})
 		return
 	}
+
+    //update the stock of the products when the order is paid (check how to handle this situation as we do not want to block the inventory of products)
+	productsCollection := db.GetDBCollection("products")
+	order, err := models.GetOrderById(ordersCollection, id)
+	if err != nil { 
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not update order" + err.Error()}) 
+		return
+	}
+
+	for _, product := range order.Products {
+		err = models.UpdateStock(product.Product, product.Quantity, productsCollection)
+		if err != nil { 
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not update order" + err.Error()}) 
+			return
+		}
+	}
+	
 
 	c.JSON(http.StatusOK, gin.H{"message": "Order status changed to paid!"})
 }

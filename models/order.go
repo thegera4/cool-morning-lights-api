@@ -94,8 +94,7 @@ usersCollection *mongo.Collection, productsCollection *mongo.Collection) error {
 }
 
 // Updates an order in the database.
-func ChangePaidStatus(id string, paidStatus *PaidStatus) error {
-	collection := db.GetDBCollection("orders")
+func ChangePaidStatus(id string, paidStatus *PaidStatus , collection *mongo.Collection) error {
 	ctx := context.TODO()
 
 	objID, err := primitive.ObjectIDFromHex(id)
@@ -117,10 +116,41 @@ func OrderIsPaid(ctx context.Context, collection *mongo.Collection, objID primit
 	if order.Err() != nil { return false, order.Err() }
 	
 	var orderObj Order
-	err := order.Decode(orderObj)
+	err := order.Decode(&orderObj)
 	if err != nil { return false, err }
 	
 	if orderObj.Paid == paidStatus { return true, errors.New("order is already paid") }
 
 	return false, nil
+}
+
+// Returns an order from the database if it exists, searching by id.
+func GetOrderById(collection *mongo.Collection, id string) (*Order, error) {
+    ctx := context.TODO()
+
+    var order Order
+    objID, err := primitive.ObjectIDFromHex(id)
+    if err != nil {
+        return nil, err
+    }
+
+    err = collection.FindOne(ctx, bson.M{"_id": objID}).Decode(&order)
+    if err != nil {
+        return nil, err
+    }
+
+    return &order, nil
+}
+
+// Updates the stock of a product in the database.
+func UpdateStock(productID string, quantity int, collection *mongo.Collection) error {
+	ctx := context.TODO()
+
+	objID, err := primitive.ObjectIDFromHex(productID)
+	if err != nil { return err }
+
+	_, err = collection.UpdateOne(ctx, bson.M{"_id": objID}, bson.M{"$inc": bson.M{"stock": -quantity}})
+	if err != nil { return err }
+
+	return nil
 }
