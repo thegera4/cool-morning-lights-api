@@ -28,6 +28,11 @@ type ProductInOrder struct {
 	Quantity int `json:"quantity" bson:"quantity" binding:"required"`
 }
 
+// Struct that represents a change in the paid status of an order.
+type PaidStatus struct {
+	Paid bool `json:"paid" bson:"paid" binding:"required"`
+}
+
 // Returns the collection of orders from the database.
 func GetAllOrders() ([]Order, error) {
 	collection := db.GetDBCollection("orders")
@@ -83,6 +88,32 @@ usersCollection *mongo.Collection, productsCollection *mongo.Collection) error {
 	order.Total = total
 
 	_, err = ordersCollection.InsertOne(ctx, order)
+	if err != nil { return err }
+
+	return nil
+}
+
+// Updates an order in the database.
+func ChangePaidStatus(id string, paidStatus *PaidStatus) error {
+	collection := db.GetDBCollection("orders")
+	ctx := context.TODO()
+
+	objID, err := primitive.ObjectIDFromHex(id)
+	if err != nil { return err }
+
+	// get the order by id
+	order := collection.FindOne(ctx, bson.M{"_id": objID})
+	if order.Err() != nil { return order.Err() }
+
+	// decode the order into an Order object
+	var orderObj Order
+	err = order.Decode(&orderObj)
+	if err != nil { return err }
+
+	// check if the order is already set to the requested paid status
+	if orderObj.Paid == paidStatus.Paid { return errors.New("order is already paid") }
+
+	_, err = collection.UpdateOne(ctx, bson.M{"_id": objID}, bson.M{"$set": bson.M{"paid": true}})
 	if err != nil { return err }
 
 	return nil

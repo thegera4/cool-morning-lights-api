@@ -27,6 +27,7 @@ func RegisterRoutes(server *gin.Engine) {
 	admin.PUT("/api/stores/:id", updateStore)
 	admin.GET("/api/orders", getOrders)
 	admin.DELETE("/api/orders/:id", deleteOrder)
+	admin.PATCH("/api/orders/:id", updateOrder)
 
 	// User Protected routes
 	user := server.Group("/")

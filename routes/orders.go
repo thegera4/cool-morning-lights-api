@@ -35,7 +35,7 @@ func createOrder(c *gin.Context) {
 	var order models.Order
 	err := c.BindJSON(&order)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request" + err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request"})
 		return
 	}
 
@@ -53,4 +53,23 @@ func createOrder(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusCreated, gin.H{"message": "Order created successfully"})
+}
+
+// Handles the request to update an order.
+func updateOrder(c *gin.Context) {
+	id := c.Param("id")
+	var paidStatus models.PaidStatus
+	err := c.BindJSON(&paidStatus)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request"})
+		return
+	}
+
+	err = models.ChangePaidStatus(id, &paidStatus)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not update order"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Order status changed to paid!"})
 }

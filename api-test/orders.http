@@ -12,6 +12,15 @@ DELETE http://localhost:8080/api/orders/65f35ae651436b15d85bc4d0
 Content-Type: application/json
 Authorization: 
 
+### Update the paid status of an order
+PATCH http://localhost:8080/api/orders/65f7c3df8a64a3ed0f5282fe
+Content-Type: application/json
+Authorization: 
+    
+{
+    "paid": true
+}
+
 ############################################
 ### Protected routes for regular users. ###
 ############################################
