@@ -101,20 +101,26 @@ func ChangePaidStatus(id string, paidStatus *PaidStatus) error {
 	objID, err := primitive.ObjectIDFromHex(id)
 	if err != nil { return err }
 
-	// get the order by id
-	order := collection.FindOne(ctx, bson.M{"_id": objID})
-	if order.Err() != nil { return order.Err() }
-
-	// decode the order into an Order object
-	var orderObj Order
-	err = order.Decode(&orderObj)
+	orderIsPaid, err := OrderIsPaid(ctx, collection, objID, paidStatus.Paid)
 	if err != nil { return err }
-
-	// check if the order is already set to the requested paid status
-	if orderObj.Paid == paidStatus.Paid { return errors.New("order is already paid") }
+	if orderIsPaid { return errors.New("order is already paid") }
 
 	_, err = collection.UpdateOne(ctx, bson.M{"_id": objID}, bson.M{"$set": bson.M{"paid": true}})
 	if err != nil { return err }
 
 	return nil
+}
+
+// Checks if the order is already set to the requested paid status and returns an error if it is.
+func OrderIsPaid(ctx context.Context, collection *mongo.Collection, objID primitive.ObjectID, paidStatus bool) (bool, error) {
+	order := collection.FindOne(ctx, bson.M{"_id": objID})
+	if order.Err() != nil { return false, order.Err() }
+	
+	var orderObj Order
+	err := order.Decode(orderObj)
+	if err != nil { return false, err }
+	
+	if orderObj.Paid == paidStatus { return true, errors.New("order is already paid") }
+
+	return false, nil
 }
